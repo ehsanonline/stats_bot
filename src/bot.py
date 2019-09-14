@@ -56,4 +56,6 @@ class Bot:
         data[i] = int(data[i])+1 if i in data and data[i] else 1
         data['last_'+i] = time.time()
         break
+    data['total'] = int(data['total'])+1 if 'total' in data and data['total'] else 1
+    data['last_message'] = time.time()
     r.hmset(name, data)

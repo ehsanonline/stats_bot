@@ -17,10 +17,13 @@ Support count of these message types:
 * locations
 * venues
 * polls
-* add users
-* leaves group chat
-* pinned messages
+* count of new users that user adds
+* user leaves group chat
+* pinned messages by user
 
-Last time that user send any type will be saved too.
+Total number of messages and last time that user send any type will be saved separately too.
 
-Admins can receive stats of any user by replying a message of that user and send `/stats` command.
+### Commands
+* any user can recevie his/her stats by sending `/stats` command in group.
+* admins can receive stats of any user by replying a message of that user and send `/stats` command.
+* to clear a user stats, admins can reply a message of that user and send `/clear` command.
