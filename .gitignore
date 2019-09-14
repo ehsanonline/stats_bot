@@ -1,3 +1,5 @@
-env
-.vscode
+__pychache__/
+/env
+/.vscode
 src/config.py
+*.pyc
