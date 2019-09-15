@@ -21,7 +21,7 @@ Support count of these message types:
 * user leaves group chat
 * pinned messages by user
 
-Total number of messages and last time that user send any type will be saved separately too.
+Total number of messages and last time that user sends any type will be saved separately too.
 
 ### Commands
 * any user can recevie his/her stats by sending `/stats` command in group.
