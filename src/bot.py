@@ -16,23 +16,23 @@ except Exception as e:
   exit()
 
 types = {
-    'text': ['Text', 'Texts'],
-    'sticker': ['Sticker', 'Stickers'],
-    'audio': ['Music', 'Music'],
-    'animation': ['Animation', 'Animations'],
-    'document': ['Document', 'Ducuments'],
-    'game': ['Game', 'Games'],
-    'photo': ['Photo', 'Photos'],
-    'video': ['Video', 'Videos'],
-    'voice': ['Voice', 'Voices'],
-    'video_note': ['Video Note', 'Video Notes'],
-    'contact': ['Contact', 'Contacts'],
-    'location': ['Location', 'Locations'],
-    'venue': ['Venue', 'Venues'],
-    'poll': ['Poll', 'Polls'],
-    'new_chat_members': ['Join/Add Member', 'Joins/Add Members'],
-    'left_chat_member': ['Leave', 'Leaves'],
-    'pinned_message': ['Pin', 'Pins']
+    'text': ['📝','Text', 'Texts'],
+    'sticker': ['🧩','Sticker', 'Stickers'],
+    'audio': ['🎶','Music', 'Music'],
+    'animation': ['🎭','Animation', 'Animations'],
+    'document': ['🗄','Document', 'Ducuments'],
+    'game': ['🎮','Game', 'Games'],
+    'photo': ['🖼','Photo', 'Photos'],
+    'video': ['🎬','Video', 'Videos'],
+    'voice': ['🗣','Voice', 'Voices'],
+    'video_note': ['🎦','Video Note', 'Video Notes'],
+    'contact': ['👥','Contact', 'Contacts'],
+    'location': ['📍','Location', 'Locations'],
+    'venue': ['🗺','Venue', 'Venues'],
+    'poll': ['📊','Poll', 'Polls'],
+    'new_chat_members': ['👤','Join/Add Member', 'Joins/Add Members'],
+    'left_chat_member': ['👣','Leave', 'Leaves'],
+    'pinned_message': ['📌','Pin', 'Pins']
 }
 
 
@@ -83,30 +83,27 @@ class Bot:
             text='Sorry, only admins can receive other members stats. To see your own stats, send /stats without replying.',
             reply_to_message_id=update.message.message_id)
         return
-      name = 'chat:{}_user:{}'.format(
-          update.message.chat.id, update.message.reply_to_message.from_user.id)
-      user = self.get_inlined_name(update.message.reply_to_message.from_user)
+      user = update.message.reply_to_message.from_user
     else:
-      name = 'chat:{}_user:{}'.format(
-          update.message.chat.id, update.message.from_user.id)
-      user = self.get_inlined_name(update.message.from_user)
+      user = update.message.from_user
+    name = 'chat:{}_user:{}'.format( update.message.chat.id, user.id)
     data = r.hgetall(name)
-    out = user+' stats:\n'
+    out = '{} stats:\n'.format(self.get_inlined_name(user))
     t = types.keys()
     count = 0
     for k, v in data.items():
       if k in t:
         count += 1
-        out += '{}: {} (last: {})\n'.format(types[k][0 if v == '1' else 1], v, datetime.datetime.fromtimestamp(
+        out += '{} {}: <b>{}</b> <i>last: {}</i>\n'.format(types[k][0],types[k][1 if v == '1' else 2], v, datetime.datetime.fromtimestamp(
             float(data['last_'+k])).strftime("%y/%d/%m %H:%M"))
     if not count:
       context.bot.send_message(
           chat_id=update.message.chat.id,
-          text='{} has no stats yet.'.format(user),
+          text='{} has no stats yet.'.format(self.get_inlined_name(user)),
           parse_mode='html',
           reply_to_message_id=update.message.message_id)
       return
-    out += '{}: {} (last: {})'.format('Total', data['total'], datetime.datetime.fromtimestamp(
+    out += '{}: <b>{}</b> <i>last: {}</i>'.format('Total', data['total'], datetime.datetime.fromtimestamp(
         float(data['last_message'])).strftime("%y/%d/%m %H:%M"))
     context.bot.send_message(
         chat_id=update.message.chat.id,
@@ -124,17 +121,14 @@ class Bot:
           reply_to_message_id=update.message.message_id)
       return
     if update.message.reply_to_message:
-      name = 'chat:{}_user:{}'.format(
-          update.message.chat.id, update.message.reply_to_message.from_user.id)
-      user = self.get_inlined_name(update.message.reply_to_message.from_user)
+      user = update.message.reply_to_message.from_user
     else:
-      name = 'chat:{}_user:{}'.format(
-          update.message.chat.id, update.message.from_user.id)
-      user = self.get_inlined_name(update.message.from_user)
+      user = update.message.from_user
+    name = 'chat:{}_user:{}'.format( update.message.chat.id, user.id)
     if r.delete(name):
       context.bot.send_message(
           chat_id=update.message.chat.id,
-          text='{} stats cleared.'.format(user),
+          text='{} stats cleared.'.format(self.get_inlined_name(user)),
           parse_mode='html',
           reply_to_message_id=update.message.message_id)
 
