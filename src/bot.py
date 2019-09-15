@@ -16,23 +16,23 @@ except Exception as e:
   exit()
 
 types = {
-    'text': ['📝','Text', 'Texts'],
-    'sticker': ['🧩','Sticker', 'Stickers'],
-    'audio': ['🎶','Music', 'Music'],
-    'animation': ['🎭','Animation', 'Animations'],
-    'document': ['🗄','Document', 'Ducuments'],
-    'game': ['🎮','Game', 'Games'],
-    'photo': ['🖼','Photo', 'Photos'],
-    'video': ['🎬','Video', 'Videos'],
-    'voice': ['🗣','Voice', 'Voices'],
-    'video_note': ['🎦','Video Note', 'Video Notes'],
-    'contact': ['👥','Contact', 'Contacts'],
-    'location': ['📍','Location', 'Locations'],
-    'venue': ['🗺','Venue', 'Venues'],
-    'poll': ['📊','Poll', 'Polls'],
-    'new_chat_members': ['👤','Join/Add Member', 'Joins/Add Members'],
-    'left_chat_member': ['👣','Leave', 'Leaves'],
-    'pinned_message': ['📌','Pin', 'Pins']
+    'text': ['📝', 'Text', 'Texts'],
+    'sticker': ['🧩', 'Sticker', 'Stickers'],
+    'audio': ['🎶', 'Music', 'Music'],
+    'animation': ['🎭', 'Animation', 'Animations'],
+    'document': ['🗄', 'Document', 'Ducuments'],
+    'game': ['🎮', 'Game', 'Games'],
+    'photo': ['🖼', 'Photo', 'Photos'],
+    'video': ['🎬', 'Video', 'Videos'],
+    'voice': ['🗣', 'Voice', 'Voices'],
+    'video_note': ['🎦', 'Video Note', 'Video Notes'],
+    'contact': ['👥', 'Contact', 'Contacts'],
+    'location': ['📍', 'Location', 'Locations'],
+    'venue': ['🗺', 'Venue', 'Venues'],
+    'poll': ['📊', 'Poll', 'Polls'],
+    'new_chat_members': ['👤', 'Join/Add Member', 'Joins/Add Members'],
+    'left_chat_member': ['👣', 'Leave', 'Leaves'],
+    'pinned_message': ['📌', 'Pin', 'Pins']
 }
 
 
@@ -86,7 +86,7 @@ class Bot:
       user = update.message.reply_to_message.from_user
     else:
       user = update.message.from_user
-    name = 'chat:{}_user:{}'.format( update.message.chat.id, user.id)
+    name = 'chat:{}_user:{}'.format(update.message.chat.id, user.id)
     data = r.hgetall(name)
     out = '{} stats:\n'.format(self.get_inlined_name(user))
     t = types.keys()
@@ -94,7 +94,7 @@ class Bot:
     for k, v in data.items():
       if k in t:
         count += 1
-        out += '{} {}: <b>{}</b> <i>last: {}</i>\n'.format(types[k][0],types[k][1 if v == '1' else 2], v, datetime.datetime.fromtimestamp(
+        out += '{} {}: <b>{}</b> <i>last: {}</i>\n'.format(types[k][0], types[k][1 if v == '1' else 2], v, datetime.datetime.fromtimestamp(
             float(data['last_'+k])).strftime("%y/%d/%m %H:%M"))
     if not count:
       context.bot.send_message(
@@ -124,7 +124,7 @@ class Bot:
       user = update.message.reply_to_message.from_user
     else:
       user = update.message.from_user
-    name = 'chat:{}_user:{}'.format( update.message.chat.id, user.id)
+    name = 'chat:{}_user:{}'.format(update.message.chat.id, user.id)
     if r.delete(name):
       context.bot.send_message(
           chat_id=update.message.chat.id,
