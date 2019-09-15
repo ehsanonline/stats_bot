@@ -1,6 +1,8 @@
 ## Telegram Stats Bot
 This is a simple python telegram bot that saves group users stats such as count of their text messages, stickers, voices and... into a redis database and send them via `/stats` command. just for fun and as a sample project!
 
+!(stats bot chat)[https://raw.githubusercontent.com/ehsanonline/stats_bot/master/image.png]
+
 ### Features
 Support count of these message types:
 * texts
