@@ -44,6 +44,8 @@ class Bot:
     updater.dispatcher.add_handler(
         CommandHandler('stats', callback=self.stats_command))
     updater.dispatcher.add_handler(
+        CommandHandler('clear', callback=self.clear_command))
+    updater.dispatcher.add_handler(
         MessageHandler(None, callback=self.new_message))
 
     updater.dispatcher.add_error_handler(self.error_cb)
@@ -75,9 +77,7 @@ class Bot:
     if not update.message or not update.message.from_user or not update.message.chat or update.message.chat.type not in ['supergroup', 'group']:
       return
     if update.message.reply_to_message:
-      chat_member = context.bot.get_chat_member(
-          update.message.chat.id, update.message.from_user.id)
-      if chat_member.status not in ['creator', 'administrator']:
+      if not self.is_admin(context.bot, update.message.chat.id, update.message.from_user.id):
         context.bot.send_message(
             chat_id=update.message.chat.id,
             text='Sorry, only admins can receive other members stats. To see your own stats, send /stats without replying.',
@@ -93,18 +93,59 @@ class Bot:
     data = r.hgetall(name)
     out = user+' stats:\n'
     t = types.keys()
+    count = 0
     for k, v in data.items():
       if k in t:
+        count += 1
         out += '{}: {} (last: {})\n'.format(types[k][0 if v == '1' else 1], v, datetime.datetime.fromtimestamp(
             float(data['last_'+k])).strftime("%y/%d/%m %H:%M"))
+    if not count:
+      context.bot.send_message(
+          chat_id=update.message.chat.id,
+          text='{} has no stats yet.'.format(user),
+          parse_mode='html',
+          reply_to_message_id=update.message.message_id)
+      return
+    out += '{}: {} (last: {})'.format('Total', data['total'], datetime.datetime.fromtimestamp(
+        float(data['last_message'])).strftime("%y/%d/%m %H:%M"))
     context.bot.send_message(
         chat_id=update.message.chat.id,
         text=out,
         parse_mode='html',
         reply_to_message_id=update.message.message_id)
 
+  def clear_command(self, update: Update, context: CallbackContext):
+    if not update.message or not update.message.from_user or not update.message.chat or update.message.chat.type not in ['supergroup', 'group']:
+      return
+    if not self.is_admin(context.bot, update.message.chat.id, update.message.from_user.id):
+      context.bot.send_message(
+          chat_id=update.message.chat.id,
+          text='Sorry, only admins can clear members stats.',
+          reply_to_message_id=update.message.message_id)
+      return
+    if update.message.reply_to_message:
+      name = 'chat:{}_user:{}'.format(
+          update.message.chat.id, update.message.reply_to_message.from_user.id)
+      user = self.get_inlined_name(update.message.reply_to_message.from_user)
+    else:
+      name = 'chat:{}_user:{}'.format(
+          update.message.chat.id, update.message.from_user.id)
+      user = self.get_inlined_name(update.message.from_user)
+    if r.delete(name):
+      context.bot.send_message(
+          chat_id=update.message.chat.id,
+          text='{} stats cleared.'.format(user),
+          parse_mode='html',
+          reply_to_message_id=update.message.message_id)
+
   def get_fullname(self, user):
     return user.first_name+(' '+user.last_name if user.last_name else '')
 
   def get_inlined_name(self, user):
     return '<a href="tg://user?id={}">{}</a>'.format(user.id, self.get_fullname(user))
+
+  def is_admin(self, bot, chat_id, user_id):
+    chat_member = bot.get_chat_member(chat_id, user_id)
+    if chat_member.status in ['creator', 'administrator']:
+      return True
+    return False

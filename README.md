@@ -27,3 +27,9 @@ Total number of messages and last time that user sends any type will be saved se
 * any user can recevie his/her stats by sending `/stats` command in group.
 * admins can receive stats of any user by replying a message of that user and send `/stats` command.
 * to clear a user stats, admins can reply a message of that user and send `/clear` command.
+
+### How to run
+0. you should have redis and python 3 installed on your system.
+1. rename the `src./.config.py` file into `src/config.py` and fill the variables with proper values.
+2. install dependencies by running `pip install -r requirements.txt` command.
+3. start the bot with `python -m run` command.
