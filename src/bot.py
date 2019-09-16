@@ -6,7 +6,11 @@ from telegram import Update
 from telegram.ext import (CallbackContext, CommandHandler, MessageHandler,
                           Updater)
 
-from src.config import config
+try:
+  from src.config import config
+except:
+  print("Please rename 'src/.config.py' file to 'src/config.py' and fill the variables with proper values.")
+  exit()
 
 try:
   r = redis.Redis(host=config['redis-server'], port=config['redis-port'],
