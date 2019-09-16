@@ -86,9 +86,8 @@ class Bot:
       user = update.message.reply_to_message.from_user
     else:
       user = update.message.from_user
-    name = 'chat:{}_user:{}'.format(update.message.chat.id, user.id)
-    data = r.hgetall(name)
-    out = '{} stats:\n'.format(self.get_inlined_name(user))
+    data = r.hgetall('chat:{}_user:{}'.format(update.message.chat.id, user.id))
+    out = ''
     t = types.keys()
     count = 0
     for k, v in data.items():
@@ -105,6 +104,7 @@ class Bot:
       return
     out += '{}: <b>{}</b> <i>last: {}</i>'.format('Total', data['total'], datetime.datetime.fromtimestamp(
         float(data['last_message'])).strftime("%y/%d/%m %H:%M"))
+    out = '{} stats:\n'.format(self.get_inlined_name(user))+out
     context.bot.send_message(
         chat_id=update.message.chat.id,
         text=out,
@@ -124,8 +124,7 @@ class Bot:
       user = update.message.reply_to_message.from_user
     else:
       user = update.message.from_user
-    name = 'chat:{}_user:{}'.format(update.message.chat.id, user.id)
-    if r.delete(name):
+    if r.delete('chat:{}_user:{}'.format(update.message.chat.id, user.id)):
       context.bot.send_message(
           chat_id=update.message.chat.id,
           text='{} stats cleared.'.format(self.get_inlined_name(user)),
