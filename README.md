@@ -34,3 +34,6 @@ Total number of messages and last time that user sends any type will be saved se
 1. rename the `src/.config.py` file to `src/config.py` and fill the variables with proper values.
 2. install dependencies by running `pip install -r requirements.txt` command.
 3. start the bot with `python -m run` command.
+
+Make sure your bot has access to messages.
+Have fun!
