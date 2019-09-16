@@ -18,9 +18,9 @@ Support count of these message types:
 * locations
 * venues
 * polls
-* count of new users that user adds
-* user leaves group chat
 * pinned messages by user
+* count of times that user leave group chat
+* count of times that user adds new members or joined group
 
 Total number of messages and last time that user sends any type will be saved separately too.
 
@@ -35,5 +35,4 @@ Total number of messages and last time that user sends any type will be saved se
 2. install dependencies by running `pip install -r requirements.txt` command.
 3. start the bot with `python -m run` command.
 
-Make sure your bot has access to messages.
-Have fun!
+Make sure your bot has access to messages. Have fun!
