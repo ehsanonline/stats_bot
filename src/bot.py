@@ -42,6 +42,7 @@ types = {
 
 class Bot:
   me = None
+  bot = None
 
   def start(self):
     updater = Updater(config["token"], use_context=True)
@@ -54,6 +55,7 @@ class Bot:
 
     updater.dispatcher.add_error_handler(self.error_cb)
     self.me = updater.bot.get_me()
+    self.bot = updater.bot
     print(self.me.username, 'started.')
     updater.start_polling()
     updater.idle()
@@ -81,8 +83,8 @@ class Bot:
     if not update.message or not update.message.from_user or not update.message.chat or update.message.chat.type not in ['supergroup', 'group']:
       return
     if update.message.reply_to_message:
-      if not self.is_admin(context.bot, update.message.chat.id, update.message.from_user.id):
-        context.bot.send_message(
+      if not self.is_admin(update.message.chat.id, update.message.from_user.id):
+        self.bot.send_message(
             chat_id=update.message.chat.id,
             text='Sorry, only admins can receive other members stats. To see your own stats, send /stats without replying.',
             reply_to_message_id=update.message.message_id)
@@ -100,7 +102,7 @@ class Bot:
         out += '{} {}: <b>{}</b> <i>last: {}</i>\n'.format(types[k][0], types[k][1 if v == '1' else 2], v, datetime.datetime.fromtimestamp(
             float(data['last_'+k])).strftime("%y/%d/%m %H:%M"))
     if not count:
-      context.bot.send_message(
+      self.bot.send_message(
           chat_id=update.message.chat.id,
           text='{} has no stats yet.'.format(self.get_inlined_name(user)),
           parse_mode='html',
@@ -109,7 +111,7 @@ class Bot:
     out += '{}: <b>{}</b> <i>last: {}</i>'.format('Total', data['total'], datetime.datetime.fromtimestamp(
         float(data['last_message'])).strftime("%y/%d/%m %H:%M"))
     out = '{} stats:\n'.format(self.get_inlined_name(user))+out
-    context.bot.send_message(
+    self.bot.send_message(
         chat_id=update.message.chat.id,
         text=out,
         parse_mode='html',
@@ -118,8 +120,8 @@ class Bot:
   def clear_command(self, update: Update, context: CallbackContext):
     if not update.message or not update.message.from_user or not update.message.chat or update.message.chat.type not in ['supergroup', 'group']:
       return
-    if not self.is_admin(context.bot, update.message.chat.id, update.message.from_user.id):
-      context.bot.send_message(
+    if not self.is_admin(update.message.chat.id, update.message.from_user.id):
+      self.bot.send_message(
           chat_id=update.message.chat.id,
           text='Sorry, only admins can clear members stats.',
           reply_to_message_id=update.message.message_id)
@@ -129,7 +131,7 @@ class Bot:
     else:
       user = update.message.from_user
     if r.delete('chat:{}_user:{}'.format(update.message.chat.id, user.id)):
-      context.bot.send_message(
+      self.bot.send_message(
           chat_id=update.message.chat.id,
           text='{} stats cleared.'.format(self.get_inlined_name(user)),
           parse_mode='html',
@@ -141,8 +143,8 @@ class Bot:
   def get_inlined_name(self, user):
     return '<a href="tg://user?id={}">{}</a>'.format(user.id, self.get_fullname(user))
 
-  def is_admin(self, bot, chat_id, user_id):
-    chat_member = bot.get_chat_member(chat_id, user_id)
+  def is_admin(self, chat_id, user_id):
+    chat_member = self.bot.get_chat_member(chat_id, user_id)
     if chat_member.status in ['creator', 'administrator']:
       return True
     return False
