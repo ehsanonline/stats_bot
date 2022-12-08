@@ -1,7 +1,7 @@
 asn1crypto==0.24.0
 astroid==2.2.5
 autopep8==1.4.4
-certifi==2019.9.11
+certifi==2022.12.7
 cffi==1.12.3
 cryptography==3.3.2
 future==0.17.1
